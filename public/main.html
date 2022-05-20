@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess App</title>
+    <link rel="stylesheet" href="./styles/desktop.css">
+    <link rel="icon" type="image/x-icon" href="./img/icon.png">
+    <script defer src="./js/multiple-files-scripts/check-being-not-logged.js"></script>
+    <script defer src="/socket.io/socket.io.js"></script>
+    <script defer src="./js/main.js"></script>
+</head>
+<body>
+    <div class="container">
+    <section class="top-section">
+        <p class="number-of-active-users">Number of active users: 0</p>
+        <h2 class="welcome-screen">Log in!</h3>
+        <button class="logout-button">Log out</button>
+    </section>
+    <section class="bottom-section">
+    <section class="friends-section">
+    <div class="friend-list-container">
+        <h4>🔵 Click an active friend to challange him</h4>
+        <ul class="friend-list list">
+        </ul>
+    </div>
+    <div class="friend-requests-container">
+        <p>🔵 Friend requests</p>
+        <ul class="friend-requests-list list">
+            No friend requests
+        </ul>
+    </div>
+    <p>🔵 Add friend</p>
+    <form class="add-friend-form">
+        <input type="text" placeholder="friend-username" class="friend-username-input">
+        <button class="add-friend-button">Submit</button>
+    </form>
+    </section>
+    <section class="game-section">
+        <!-- <button class="test-make-a-move-btn">make a move</button> -->
+        <div class="currently-playing-display hidden">
+        </div>
+        <div class="game-requests">
+            <h3>🟢 Game requests </h3>
+            <ul class="game-requests-list list">
+
+            </ul>
+        </div>
+            <img src="./img/chess-board.png" alt="Chess board">
+    </section>
+    </section>
+    </div>
+</body>
+</html>
