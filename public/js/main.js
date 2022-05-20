@@ -402,7 +402,6 @@ socket.on("new game", async (data)=>{
     const myName = window.localStorage.getItem("username")
     console.log(data.player1,data.player2);
     if(data.player1 === myName || data.player2 === myName){
-        console.log("dupa");
         await startGame()
     }
 })
