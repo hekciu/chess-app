@@ -133,9 +133,10 @@ input{
 }
 
 img{
-    width: 60%;
+    width: 32vw;
     margin: 5vh;
-    object-fit: contain;
+    height: auto;
+    margin: auto;
 }
 
 .reject-request, .accept-request{
@@ -167,4 +168,17 @@ img{
 .currently-playing-display{
     padding-top: 3vh;
     padding-left: 2vw;
+}
+
+.img-div{
+    margin: auto;
+    margin-right: 3vw;
+}
+
+.chess-board-img{
+    position: relative;
+}
+.chess-piece{
+    position: absolute;
+    cursor: pointer;
 }

@@ -9,6 +9,7 @@
     <link rel="icon" type="image/x-icon" href="./img/icon.png">
     <script defer src="./js/multiple-files-scripts/check-being-not-logged.js"></script>
     <script defer src="/socket.io/socket.io.js"></script>
+    <script defer src="./js/game/chess-client.js"></script>
     <script defer src="./js/main.js"></script>
 </head>
 <body>
@@ -38,7 +39,6 @@
     </form>
     </section>
     <section class="game-section">
-        <!-- <button class="test-make-a-move-btn">make a move</button> -->
         <div class="currently-playing-display hidden">
         </div>
         <div class="game-requests">
@@ -47,7 +47,9 @@
 
             </ul>
         </div>
-            <img src="./img/chess-board.png" alt="Chess board">
+        <div class="img-div">
+            <img src="./img/chess-board.png" alt="Chess board" class="chess-board-img">
+        </div>
     </section>
     </section>
     </div>

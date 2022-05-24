@@ -38,6 +38,9 @@ const userScheme = new mongoose.Schema({
         type: String,
         default: ""
     },
+    currentGameColor:{
+        type: String
+    },
     gameRequests:[{
         username:{
             type: String,
@@ -72,7 +75,7 @@ const userScheme = new mongoose.Schema({
     }],
     currentGameChessMoves:{
         enemy:[{
-            chessman:{
+            chessPiece:{
                 type: String,
                 required: true
             },
@@ -82,7 +85,7 @@ const userScheme = new mongoose.Schema({
             }
         }],
         me:[{
-            chessman:{
+            chessPiece:{
                 type: String,
                 required: true
             },
@@ -280,8 +283,29 @@ userScheme.methods.endGame = async function(username){
     //do some stuff about winning etc
     friend.currentlyPlayingWith = "";
     this.currentlyPlayingWith = "";
+    friend.currentGameChessMoves.enemy = [];
+    friend.currentGameChessMoves.me = [];
+    this.currentGameChessMoves.enemy = []
+    this.currentGameChessMoves.me = [];
     await friend.save()
     await this.save()
+}
+
+userScheme.methods.addNewChessMove = async function(chessPiece,whichField,target){
+    const newChessMove = {
+        chessPiece,
+        whichField
+    }
+    try{
+        if(target === "me"){
+            this.currentGameChessMoves.me.push(newChessMove)
+        }
+        if(target === "enemy"){
+            this.currentGameChessMoves.enemy.push(newChessMove)
+        }
+    }catch(e){
+        console.log(e);
+    }
 }
 
 //static methods

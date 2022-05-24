@@ -11,8 +11,12 @@ const numberOfActiveUsers = document.querySelector(".number-of-active-users")
 const requestsListElement = document.querySelector(".game-requests-list")
 const gameRequests = document.querySelector(".game-requests")
 const currentlyPlayingDisplay = document.querySelector(".currently-playing-display")
+const chessBoardDiv = document.querySelector(".img-div")
 
 const socket = io()
+
+//Global variables
+let currentGame;
 
 const makeUrl = function(subSite){
     return window.location.href.slice(0,window.location.href.lastIndexOf("/")) + subSite
@@ -56,44 +60,6 @@ const loadGameRequests = async function(){
     addGameRequestEventListeners()
 }
 
-const startGame = async function(){
-    gameRequests.classList.add("hidden")
-    currentlyPlayingDisplay.classList.remove("hidden")
-    const myData = await getMyData()
-    currentlyPlayingDisplay.innerHTML = `<h4>🟢Currently playing with: ${myData.currentlyPlayingWith}</h4></br>
-    <button class="abadon-game-button">Abadon game</button>`
-    document.querySelector(".abadon-game-button").addEventListener("click",async ()=>{
-        const url = makeUrl("/game/endGame") 
-        const myData = await getMyData()
-        const friendName = myData.currentlyPlayingWith
-        const body = {
-            username: friendName
-        }
-        console.log(body);
-        const response = await fetch(url,{
-            method: "POST",
-            body: JSON.stringify(body),
-            headers:{
-                "Authorization": `Bearer ${window.localStorage.getItem("token")}`,
-                "Content-Type": "application/json"
-            }
-        })
-        if(response.status !== 200){
-            throw new Error("Ending game failed")
-        }
-        endGame()
-        socket.emit("end game",{
-            player1: window.localStorage.getItem("username"),
-            player2: friendName
-        })
-    })
-}
-
-const endGame = function(){
-    gameRequests.classList.remove("hidden")
-    currentlyPlayingDisplay.classList.add("hidden")
-}
-
 const addGameRequestEventListeners = function(){
     const acceptGameRequests = document.querySelectorAll(".accept-game-request")
     acceptGameRequests.forEach((el)=>{
@@ -117,7 +83,9 @@ const addGameRequestEventListeners = function(){
                 await loadGameRequests()
                 socket.emit("new game",{
                     player1: window.localStorage.getItem("username"),
-                    player2: friendName
+                    player2: friendName,
+                    player1Color: "White",
+                    player2Color: "Black"
                 })
             }catch(e){
                 console.log(e);
@@ -222,25 +190,6 @@ const loadRequestsList = async function(){
         })
     })
 }
-
-//Game
-const makeAMove = async function(chessman, whichField){
-    const body = {
-        chessman,
-        whichField,
-        token: window.localStorage.getItem("token")
-    }
-    socket.emit("new-chess-move",body)
-}
-
-socket.on("new-chess-move",async (body)=>{
-    
-})
-
-// //TESTING
-// document.querySelector(".test-make-a-move-btn").addEventListener("click",()=>{
-//     makeAMove("King","A5")
-// })
 
 //Logging out
 logoutButton.addEventListener("click", async ()=>{
@@ -398,6 +347,8 @@ socket.on("new-game-request",async (data)=>{
     }
 })
 
+//Game
+
 socket.on("new game", async (data)=>{
     const myName = window.localStorage.getItem("username")
     console.log(data.player1,data.player2);
@@ -410,4 +361,55 @@ socket.on("end game",(data)=>{
     const myName = window.localStorage.getItem("username")
     if(data.player1 === myName || data.player2 === myName) endGame()
 })
+
+const startGame = async function(){
+    gameRequests.classList.add("hidden")
+    currentlyPlayingDisplay.classList.remove("hidden")
+    const myData = await getMyData()
+    currentlyPlayingDisplay.innerHTML = `<h4>🟢Currently playing with: ${myData.currentlyPlayingWith}</h4></br>
+    <button class="abadon-game-button">Abadon game</button>`
+    console.log(myData.name,myData.currentGameColor);
+    currentGame = new ChessGameClient(myData.name,myData.currentlyPlayingWith,myData.currentGameColor,socket);
+    chessBoardDiv.addEventListener("click",currentGame.boardClickEventListener.bind(currentGame))
+    try{
+        await currentGame.loadChessMoves()
+    }catch(e){
+        console.log(e);
+    }
+    currentGame.displayChessMoves()
+    currentGame.listenForSocketE()
+    console.log("dupa");
+    document.querySelector(".abadon-game-button").addEventListener("click",async ()=>{
+        const url = makeUrl("/game/endGame") 
+        const myData = await getMyData()
+        const friendName = myData.currentlyPlayingWith
+        const body = {
+            username: friendName
+        }
+        console.log(body);
+        const response = await fetch(url,{
+            method: "POST",
+            body: JSON.stringify(body),
+            headers:{
+                "Authorization": `Bearer ${window.localStorage.getItem("token")}`,
+                "Content-Type": "application/json"
+            }
+        })
+        if(response.status !== 200){
+            throw new Error("Ending game failed")
+        }
+        endGame()
+        socket.emit("end game",{
+            player1: window.localStorage.getItem("username"),
+            player2: friendName,
+            token: window.localStorage.getItem("token")
+        })
+    })
+}
+
+const endGame = function(){
+    gameRequests.classList.remove("hidden")
+    currentlyPlayingDisplay.classList.add("hidden")
+    currentGame = undefined;
+}
 
