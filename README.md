@@ -1,5 +1,5 @@
 A simple app that allow you to play chess with your friends
 
 To start:
-npm install
-npm run start
+\n npm install
+\n npm run start
